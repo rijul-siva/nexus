@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Nexus - Translucent Islands Wireframe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tabler Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <!-- Custom Stylesheet -->
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="p-3 p-md-4 bg-light">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <a href="home.html" class="btn btn-outline-secondary btn-sm"><i class="ti ti-arrow-left"></i> Home</a>
+      <span class="fw-bold">Nexus - Translucent Islands Editor Component</span>
+    </div>
+    <a href="editor.html" class="btn btn-primary btn-sm"><i class="ti ti-external-link"></i> Full App View</a>
+  </div>
+
+  <!-- Translucent Islands Container -->
+  <div class="editor-viewport" id="editorViewport">
+
+    <!-- Blank canvas dotted grid -->
+    <div class="editor-canvas-grid" id="editorCanvas"></div>
+
+    <!-- Interactive Placed Canvas Nodes Container -->
+    <div id="canvasNodes"></div>
+
+    <!-- TOP-LEFT HEADER ISLANDS (Back Button -> Project Name -> Image Icon) -->
+
+    <!-- Back Icon Island (Left-most) -->
+    <a href="home.html" class="island island-circle island-btn island-accent text-decoration-none"
+      style="top:12px; left:16px;" title="Back to home">
+      <i class="ti ti-arrow-left" style="font-size:14px;" aria-hidden="true"></i>
+    </a>
+
+    <!-- Project Name Island -->
+    <div class="island island-pill island-btn d-flex align-items-center gap-2" style="top:12px; left:56px;"
+      id="projectNameIsland">
+      <span style="font-size:13px;" id="activeProjectName">Project name</span>
+    </div>
+
+    <!-- Image Icon Island -->
+    <button type="button" class="island island-circle island-btn" style="top:12px; left:230px;" id="photoIslandBtn"
+      title="Photo asset">
+      <i class="ti ti-photo" style="font-size:14px;" aria-hidden="true"></i>
+    </button>
+
+    <!-- TOP-RIGHT ICON ISLANDS (Download -> Add -> Search -> Share -> Profile) -->
+
+    <!-- Download Island -->
+    <button type="button" class="island island-circle island-btn" style="top:10px; right:168px;" id="downloadBtn"
+      title="Download file">
+      <i class="ti ti-download" style="font-size:16px;" aria-hidden="true"></i>
+    </button>
+
+    <!-- Add Island -->
+    <button type="button" class="island island-circle island-btn" style="top:10px; right:130px;"
+      data-bs-toggle="modal" data-bs-target="#createFileModal" title="Add File">
+      <i class="ti ti-plus" style="font-size:16px;" aria-hidden="true"></i>
+    </button>
+
+    <!-- Search Island -->
+    <button type="button" class="island island-circle island-btn" style="top:10px; right:94px;" data-bs-toggle="modal"
+      data-bs-target="#searchModal" title="Search Workspace">
+      <i class="ti ti-search" style="font-size:16px;" aria-hidden="true"></i>
+    </button>
+
+    <!-- Share Island -->
+    <button type="button" class="island island-circle island-btn island-accent" style="top:10px; right:58px;"
+      id="shareIslandBtn" title="Share">
+      <i class="ti ti-share-3" style="font-size:16px;" aria-hidden="true"></i>
+    </button>
+
+    <!-- User Profile Island -->
+    <button type="button" class="island island-circle island-btn island-dark" style="top:10px; right:20px;"
+      data-bs-toggle="modal" data-bs-target="#userProfileModal" title="User Profile">
+      <i class="ti ti-user-circle" style="font-size:16px; color:#FFFFFF;" aria-hidden="true"></i>
+    </button>
+
+    <!-- Sidebar Hide Handle Island -->
+    <div class="island island-btn island-circle-sm sidebar-handle" id="sidebarToggle" style="top:50px; left:2px;"
+      title="Toggle Sidebar">
+      <i class="ti ti-chevron-left" id="sidebarToggleIcon" style="font-size:10px;"></i>
+    </div>
+
+    <!-- Sidebar Group Islands -->
+    <div class="editor-sidebar-islands" id="sidebarIslands">
+      <div class="island island-pill d-flex align-items-center gap-2 fw-semibold"
+        style="top:52px; left:16px; font-size:11px; letter-spacing:0.5px;">
+        <span>WORKSPACE FILES</span>
+      </div>
+
+      <div class="island island-panel" style="top:84px; left:16px; width:195px;">
+        <div style="font-size:12px; line-height:2;" id="editorFileTree">
+          <!-- Dynamic user files -->
+        </div>
+      </div>
+
+      <div class="island island-pill" style="bottom:44px; left:16px; font-size:11px;">
+        Storage: <span id="storageUsageLabel">0 KB</span>
+      </div>
+
+      <button type="button" class="island island-pill island-btn island-dark"
+        style="bottom:12px; left:16px; font-size:12px;" id="sidebarLogoutBtn">
+        Log out
+      </button>
+    </div>
+
+    <!-- Bottom-Right Icon Islands -->
+    <button type="button" class="island island-circle island-btn" style="bottom:34px; right:132px;"
+      data-bs-toggle="modal" data-bs-target="#helpModal" title="Help">
+      <i class="ti ti-help" style="font-size:14px;" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="island island-circle island-btn" style="bottom:34px; right:96px;" id="undoBtn"
+      title="Undo">
+      <i class="ti ti-arrow-back-up" style="font-size:14px;" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="island island-circle island-btn island-accent" style="bottom:34px; right:60px;"
+      id="redoBtn" title="Redo">
+      <i class="ti ti-arrow-forward-up" style="font-size:14px;" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="island island-circle island-btn island-dark" style="bottom:34px; right:20px;"
+      id="deleteActiveFileBtn" title="Delete file">
+      <i class="ti ti-trash" style="font-size:14px; color:#FFFFFF;" aria-hidden="true"></i>
+    </button>
+
+    <!-- Dynamic Toast Notification Container -->
+    <div class="editor-toast-container">
+      <div id="editorToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body" id="editorToastText">
+            Action completed.
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+            aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
