@@ -1,7 +1,3 @@
-/* ==========================================================================
-   Nexus Workspace - jQuery Application Engine
-   UBCA301L Full Stack Application Development
-   ========================================================================== */
 
 $(function () {
 
