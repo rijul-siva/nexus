@@ -76,7 +76,7 @@
 <div class="modal fade" id="createFileModal" tabindex="-1" aria-labelledby="createFileModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content glass-card border-0">
-      <form id="createFileForm">
+      <form id="createFileForm" novalidate>
         <div class="modal-header border-bottom-0">
           <h5 class="modal-title fw-bold" id="createFileModalLabel"><i class="ti ti-file-plus me-1"></i> Create new file</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -84,7 +84,17 @@
         <div class="modal-body p-4">
           <div class="mb-3">
             <label for="fileName" class="form-label fw-medium">File name</label>
-            <input type="text" class="form-control" id="fileName" placeholder="e.g. Project Notes" required>
+            <input
+              type="text"
+              class="form-control"
+              id="fileName"
+              placeholder="e.g. Project Notes"
+              required
+              maxlength="100"
+            >
+            <div class="invalid-feedback">
+              Please enter a valid file name (letters, numbers, spaces, dots, underscores or hyphens; cannot be blank or only symbols).
+            </div>
           </div>
           <div class="mb-3">
             <label for="fileType" class="form-label fw-medium">File type</label>
@@ -96,13 +106,13 @@
             </select>
           </div>
           <div class="mb-3">
-            <label for="initialContent" class="form-label fw-medium">Initial Content (Optional)</label>
-            <textarea class="form-control" id="initialContent" rows="3" placeholder="Type initial content here..."></textarea>
+            <label for="initialContent" class="form-label fw-medium">Initial Content <span class="text-secondary fw-normal">(Optional)</span></label>
+            <textarea class="form-control" id="initialContent" rows="3" placeholder="Type initial content here..." maxlength="10000"></textarea>
           </div>
         </div>
         <div class="modal-footer border-top-0">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create & Open</button>
+          <button type="submit" class="btn btn-primary">Create &amp; Open</button>
         </div>
       </form>
     </div>

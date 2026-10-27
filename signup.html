@@ -19,89 +19,208 @@
       <div class="card-body p-4 p-md-5">
 
         <div class="text-center mb-4">
-          <div class="brand-mark mx-auto mb-3">NX</div>
+          <a href="index.html" class="text-decoration-none d-inline-block mb-3">
+            <div class="brand-mark mx-auto">NX</div>
+          </a>
           <h1 class="h4 mb-1 fw-bold">Create Nexus Account</h1>
           <p class="text-secondary mb-0">Fill in your details to get started</p>
         </div>
 
-        <div id="signupAlert" class="alert alert-danger rounded-3" role="alert"></div>
+        <div id="signupAlert" class="alert alert-danger rounded-3" role="alert" style="display:none;"></div>
 
         <form id="signupForm" class="row g-3" novalidate>
 
           <!-- Full Name -->
           <div class="col-md-6">
             <label for="fullName" class="form-label fw-medium">Full name</label>
-            <input type="text" class="form-control" id="fullName" placeholder="Enter full name" required>
-            <div class="invalid-feedback">Please enter your name.</div>
+            <!--
+              Full name: 2-60 chars, letters, spaces, hyphens, apostrophes only.
+              Cannot be blank or only spaces/special chars.
+            -->
+            <input
+              type="text"
+              class="form-control"
+              id="fullName"
+              placeholder="Enter full name"
+              required
+              minlength="2"
+              maxlength="60"
+              pattern="^[A-Za-z][A-Za-z\s'\-]{1,59}$"
+              autocomplete="name"
+            >
+            <div class="invalid-feedback" id="fullNameFeedback">
+              Please enter a valid full name (letters, spaces, hyphens, apostrophes; min 2 chars).
+            </div>
           </div>
 
           <!-- Username -->
           <div class="col-md-6">
             <label for="regUsername" class="form-label fw-medium">Username</label>
-            <input type="text" class="form-control" id="regUsername" placeholder="Choose a username" required>
-            <div class="invalid-feedback">Please choose a username.</div>
+            <!--
+              Username: 3-30 chars, letters/digits/underscore/hyphen only.
+              No spaces, no other special chars.
+            -->
+            <input
+              type="text"
+              class="form-control"
+              id="regUsername"
+              placeholder="Choose a username"
+              required
+              minlength="3"
+              maxlength="30"
+              pattern="^[A-Za-z0-9_\-]{3,30}$"
+              autocomplete="username"
+            >
+            <div class="invalid-feedback" id="regUsernameFeedback">
+              Username must be 3–30 characters: letters, numbers, underscores or hyphens only.
+            </div>
           </div>
 
           <!-- Email -->
           <div class="col-md-6">
             <label for="email" class="form-label fw-medium">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
-            <div class="invalid-feedback">Please enter a valid email.</div>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="name@example.com"
+              required
+              maxlength="254"
+              autocomplete="email"
+            >
+            <div class="invalid-feedback">Please enter a valid email address.</div>
           </div>
 
           <!-- Phone -->
           <div class="col-md-6">
-            <label for="phone" class="form-label fw-medium">Phone number</label>
-            <input type="tel" class="form-control" id="phone" placeholder="10 digit mobile number" pattern="[0-9]{10}">
+            <label for="phone" class="form-label fw-medium">
+              Phone number <span class="text-secondary fw-normal">(optional)</span>
+            </label>
+            <!--
+              Indian 10-digit mobile number (optionally prefixed with +91 or 0).
+            -->
+            <input
+              type="tel"
+              class="form-control"
+              id="phone"
+              placeholder="10-digit mobile number"
+              pattern="^(\+91|0)?[6-9][0-9]{9}$"
+              maxlength="15"
+              autocomplete="tel"
+            >
+            <div class="invalid-feedback">Enter a valid 10-digit Indian mobile number (e.g. 9876543210).</div>
           </div>
 
           <!-- Password -->
           <div class="col-md-6">
             <label for="regPassword" class="form-label fw-medium">Password</label>
-            <input type="password" class="form-control" id="regPassword" placeholder="Enter password" required minlength="4">
-            <div class="invalid-feedback">Password must be at least 4 characters.</div>
+            <!--
+              8-64 chars, at least 1 letter + 1 digit; no leading/trailing spaces.
+            -->
+            <input
+              type="password"
+              class="form-control"
+              id="regPassword"
+              placeholder="Min 8 characters"
+              required
+              minlength="8"
+              maxlength="64"
+              autocomplete="new-password"
+            >
+            <div class="invalid-feedback" id="regPasswordFeedback">
+              Password must be 8–64 characters with at least one letter and one digit.
+            </div>
           </div>
 
           <!-- Confirm Password -->
           <div class="col-md-6">
             <label for="confirmPassword" class="form-label fw-medium">Confirm password</label>
-            <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required minlength="4">
-            <div class="invalid-feedback">Passwords must match.</div>
+            <input
+              type="password"
+              class="form-control"
+              id="confirmPassword"
+              placeholder="Re-enter password"
+              required
+              minlength="8"
+              maxlength="64"
+              autocomplete="new-password"
+            >
+            <div class="invalid-feedback" id="confirmPasswordFeedback">Passwords must match.</div>
           </div>
 
-          <!-- Date of birth -->
+          <!-- Date of Birth -->
           <div class="col-md-4">
-            <label for="dob" class="form-label fw-medium">Date of birth</label>
+            <label for="dob" class="form-label fw-medium">
+              Date of birth <span class="text-secondary fw-normal">(optional)</span>
+            </label>
+            <!--
+              DOB: Must be between 100 years ago and 10 years ago (logical user range).
+              Set dynamically by JS.
+            -->
             <input type="date" class="form-control" id="dob">
+            <div class="invalid-feedback" id="dobFeedback">Please enter a valid date of birth.</div>
           </div>
 
           <!-- Age -->
           <div class="col-md-4">
-            <label for="age" class="form-label fw-medium">Age</label>
-            <input type="number" class="form-control" id="age" min="10" max="100" placeholder="e.g. 20">
+            <label for="age" class="form-label fw-medium">
+              Age <span class="text-secondary fw-normal">(optional)</span>
+            </label>
+            <!--
+              Age: 10–100 — logical range for a student workspace user.
+            -->
+            <input
+              type="number"
+              class="form-control"
+              id="age"
+              min="10"
+              max="100"
+              placeholder="e.g. 20"
+            >
+            <div class="invalid-feedback">Age must be between 10 and 100.</div>
           </div>
 
           <!-- Portfolio URL -->
           <div class="col-md-4">
-            <label for="portfolio" class="form-label fw-medium">Portfolio URL</label>
-            <input type="url" class="form-control" id="portfolio" placeholder="https://example.com">
+            <label for="portfolio" class="form-label fw-medium">
+              Portfolio URL <span class="text-secondary fw-normal">(optional)</span>
+            </label>
+            <input
+              type="url"
+              class="form-control"
+              id="portfolio"
+              placeholder="https://example.com"
+            >
+            <div class="invalid-feedback">Please enter a valid URL starting with http:// or https://</div>
           </div>
 
           <!-- Course Select -->
           <div class="col-md-6">
             <label for="course" class="form-label fw-medium">Course</label>
             <select class="form-select" id="course">
-              <option selected>BCA</option>
-              <option>B.Tech CSE</option>
-              <option>MCA</option>
-              <option>Other</option>
+              <option value="BCA">BCA</option>
+              <option value="B.Tech CSE">B.Tech CSE</option>
+              <option value="MCA">MCA</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
           <!-- City Datalist -->
           <div class="col-md-6">
-            <label for="city" class="form-label fw-medium">City</label>
-            <input class="form-control" list="cityOptions" id="city" placeholder="Choose or type city">
+            <label for="city" class="form-label fw-medium">
+              City <span class="text-secondary fw-normal">(optional)</span>
+            </label>
+            <!--
+              City: letters, spaces, hyphens, dots only if filled.
+            -->
+            <input
+              class="form-control"
+              list="cityOptions"
+              id="city"
+              placeholder="Choose or type city"
+              pattern="^[A-Za-z][A-Za-z\s\-\.]{0,49}$"
+              maxlength="50"
+            >
             <datalist id="cityOptions">
               <option value="Vellore">
               <option value="Chennai">
@@ -109,6 +228,7 @@
               <option value="Hyderabad">
               <option value="Mumbai">
             </datalist>
+            <div class="invalid-feedback">City name should contain only letters, spaces, or hyphens.</div>
           </div>
 
           <!-- Account Type Radio -->
@@ -132,17 +252,40 @@
 
           <!-- Experience Range -->
           <div class="col-md-3">
-            <label for="experience" class="form-label fw-medium">Experience: <span id="experienceValue">3</span></label>
-            <input type="range" class="form-range" min="1" max="5" value="3" id="experience">
+            <label for="experience" class="form-label fw-medium">
+              Experience: <span id="experienceValue">3</span> yr<span id="experiencePlural">s</span>
+            </label>
+            <!--
+              Experience: 1-10 years (meaningful student/dev range).
+            -->
+            <input type="range" class="form-range" min="1" max="10" value="3" id="experience">
+            <div class="d-flex justify-content-between" style="font-size:11px; color:#6c757d;">
+              <span>1 yr</span><span>10 yrs</span>
+            </div>
           </div>
 
           <!-- Short Bio -->
           <div class="col-12">
-            <label for="bio" class="form-label fw-medium">Short bio</label>
-            <textarea class="form-control" id="bio" rows="2" placeholder="Tell us a little about yourself"></textarea>
+            <label for="bio" class="form-label fw-medium">
+              Short bio <span class="text-secondary fw-normal">(optional)</span>
+            </label>
+            <!--
+              Bio: max 300 chars, must not be only whitespace/special chars if filled.
+            -->
+            <textarea
+              class="form-control"
+              id="bio"
+              rows="2"
+              maxlength="300"
+              placeholder="Tell us a little about yourself"
+            ></textarea>
+            <div class="invalid-feedback" id="bioFeedback">
+              Bio must contain at least some text (not just spaces or symbols).
+            </div>
+            <div class="form-text text-end" id="bioCharCount">0 / 300</div>
           </div>
 
-          <!-- Required Checkbox -->
+          <!-- Terms Checkbox -->
           <div class="col-12">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="agreeTerms" required>
@@ -152,13 +295,21 @@
           </div>
 
           <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Create account <i class="ti ti-check ms-1"></i></button>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">
+              Create account <i class="ti ti-check ms-1"></i>
+            </button>
           </div>
 
         </form>
 
         <p class="text-center text-secondary mt-4 mb-0">
           Already have an account? <a href="login.html" class="fw-semibold text-decoration-none">Sign in</a>
+        </p>
+
+        <p class="text-center mt-2 mb-0">
+          <a href="index.html" class="text-secondary small text-decoration-none">
+            <i class="ti ti-arrow-left me-1"></i>Back to home
+          </a>
         </p>
 
       </div>

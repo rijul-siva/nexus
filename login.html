@@ -19,30 +19,63 @@
       <div class="card-body p-4 p-md-5">
 
         <div class="text-center mb-4">
-          <div class="brand-mark mx-auto mb-3">NX</div>
+          <a href="index.html" class="text-decoration-none d-inline-block mb-3">
+            <div class="brand-mark mx-auto">NX</div>
+          </a>
           <h1 class="h4 mb-1 fw-bold">Nexus Workspace</h1>
           <p class="text-secondary mb-0">Sign in to your account</p>
         </div>
 
-        <div id="loginAlert" class="alert alert-danger rounded-3" role="alert"></div>
+        <div id="loginAlert" class="alert alert-danger rounded-3" role="alert" style="display:none;"></div>
 
         <form id="loginForm" class="needs-validation" novalidate>
           <div class="mb-3">
             <label for="username" class="form-label fw-medium">Username</label>
             <div class="input-group">
               <span class="input-group-text bg-white border-end-0"><i class="ti ti-user"></i></span>
-              <input type="text" class="form-control border-start-0" id="username" placeholder="Enter username" required>
+              <!--
+                Username: 3-30 chars, letters, digits, underscore, hyphen only.
+                No spaces, no special characters, cannot be blank.
+              -->
+              <input
+                type="text"
+                class="form-control border-start-0"
+                id="username"
+                placeholder="Enter username"
+                required
+                minlength="3"
+                maxlength="30"
+                pattern="^[A-Za-z0-9_\-]{3,30}$"
+                autocomplete="username"
+              >
             </div>
-            <div class="invalid-feedback">Please enter your username.</div>
+            <div class="invalid-feedback" id="usernameFeedback">
+              Username must be 3–30 characters using only letters, numbers, _ or -.
+            </div>
           </div>
 
           <div class="mb-3">
             <label for="password" class="form-label fw-medium">Password</label>
             <div class="input-group">
               <span class="input-group-text bg-white border-end-0"><i class="ti ti-lock"></i></span>
-              <input type="password" class="form-control border-start-0" id="password" placeholder="Enter password" required minlength="4">
+              <!--
+                Password: 8-64 chars, must not be only spaces.
+                At least one letter and one digit required.
+              -->
+              <input
+                type="password"
+                class="form-control border-start-0"
+                id="password"
+                placeholder="Enter password"
+                required
+                minlength="8"
+                maxlength="64"
+                autocomplete="current-password"
+              >
             </div>
-            <div class="invalid-feedback">Password must be at least 4 characters.</div>
+            <div class="invalid-feedback" id="passwordFeedback">
+              Password must be at least 8 characters.
+            </div>
           </div>
 
           <div class="form-check mb-4">
@@ -50,11 +83,19 @@
             <label class="form-check-label text-secondary" for="rememberMe">Remember me</label>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Sign in <i class="ti ti-arrow-right ms-1"></i></button>
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">
+            Sign in <i class="ti ti-arrow-right ms-1"></i>
+          </button>
         </form>
 
         <p class="text-center text-secondary mt-4 mb-0">
           Don't have an account? <a href="signup.html" class="fw-semibold text-decoration-none">Create one</a>
+        </p>
+
+        <p class="text-center mt-2 mb-0">
+          <a href="index.html" class="text-secondary small text-decoration-none">
+            <i class="ti ti-arrow-left me-1"></i>Back to home
+          </a>
         </p>
 
       </div>
