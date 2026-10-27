@@ -207,16 +207,16 @@
   <div class="modal fade" id="createFileModal" tabindex="-1" aria-labelledby="createFileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content glass-card border-0">
-        <form id="createFileFormEditor">
+        <form id="createFileFormEditor" novalidate>
           <div class="modal-header border-bottom-0">
-            <h5 class="modal-title fw-bold" id="createFileModalLabel"><i class="ti ti-file-plus me-1"></i> Create New
-              File</h5>
+            <h5 class="modal-title fw-bold" id="createFileModalLabel"><i class="ti ti-file-plus me-1"></i> Create New File</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4">
             <div class="mb-3">
               <label for="editorFileName" class="form-label fw-medium">File name</label>
-              <input type="text" class="form-control" id="editorFileName" placeholder="e.g. Design Spec" required>
+              <input type="text" class="form-control" id="editorFileName" placeholder="e.g. Design Spec" required maxlength="100">
+              <div class="invalid-feedback">Please enter a valid file name (letters, numbers, spaces, dots, underscores or hyphens; cannot be blank or only symbols).</div>
             </div>
             <div class="mb-3">
               <label for="editorFileType" class="form-label fw-medium">File type</label>
@@ -228,14 +228,14 @@
               </select>
             </div>
             <div class="mb-3">
-              <label for="editorInitialContent" class="form-label fw-medium">Initial Content</label>
+              <label for="editorInitialContent" class="form-label fw-medium">Initial Content <span class="text-secondary fw-normal">(Optional)</span></label>
               <textarea class="form-control" id="editorInitialContent" rows="3"
-                placeholder="Type initial content..."></textarea>
+                placeholder="Type initial content..." maxlength="10000"></textarea>
             </div>
           </div>
           <div class="modal-footer border-top-0">
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">Create & Open</button>
+            <button type="submit" class="btn btn-primary">Create &amp; Open</button>
           </div>
         </form>
       </div>
@@ -281,7 +281,7 @@
             <li class="mb-3 d-flex gap-3 align-items-start">
               <span class="badge bg-primary rounded-circle p-2"><i class="ti ti-file-text"></i></span>
               <div>
-                <strong>Live Text & Content Editing</strong>
+                <strong>Live Text &amp; Content Editing</strong>
                 <p class="text-secondary small mb-0">Type into the translucent content sheet to edit documents in real
                   time. Changes auto-save automatically.</p>
               </div>
