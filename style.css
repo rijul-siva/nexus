@@ -350,3 +350,175 @@ body {
   z-index: 100;
   pointer-events: none;
 }
+
+/* ================================================================
+   LANDING PAGE — Dark Navy Gradient Theme
+   ================================================================ */
+
+/* Full-page dark gradient background */
+body.landing-page {
+  background: linear-gradient(170deg, #1C2541 0%, #0B132B 50%, #1a2240 100%);
+  color: #FFFFFF;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---- Landing Navbar ---- */
+.landing-navbar {
+  background: transparent !important;
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.landing-navbar .brand-mark {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+}
+
+/* Ghost button (Sign in) */
+.btn-landing-ghost {
+  background: transparent;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  padding: 8px 24px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.btn-landing-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Solid button (Get started / Create an account) */
+.btn-landing-solid {
+  background: #FFFFFF;
+  color: var(--nexus-dark);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  padding: 8px 24px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn-landing-solid:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--nexus-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Outline button (See how it works) */
+.btn-landing-outline {
+  background: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  transition: all 0.25s ease;
+}
+
+.btn-landing-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ---- Hero Section ---- */
+.landing-hero {
+  padding: 6rem 1.5rem 4rem;
+  min-height: 60vh;
+}
+
+.landing-badge {
+  display: inline-block;
+  padding: 8px 22px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.landing-headline {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.landing-subtext {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- Feature Cards Section ---- */
+.landing-features {
+  padding: 2rem 0 6rem;
+}
+
+.landing-feature-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.landing-feature-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.landing-feature-card h3 {
+  color: #FFFFFF;
+}
+
+.landing-feature-card p.text-muted {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.feature-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.feature-icon-wrap i {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ---- Landing Footer ---- */
+.landing-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.82rem;
+}
