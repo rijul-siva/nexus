@@ -27,25 +27,28 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// ── Rate limiting (global) ─────────────────────────────────────────────────────
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max:      200,
-  standardHeaders: true,
-  legacyHeaders:   false,
-  message: { status: 'fail', message: 'Too many requests. Please try again later.' },
-});
-app.use('/api', limiter);
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+// Disabled in test environment to avoid interference with automated tests
+if (process.env.NODE_ENV !== 'test') {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max:      200,
+    standardHeaders: true,
+    legacyHeaders:   false,
+    message: { status: 'fail', message: 'Too many requests. Please try again later.' },
+  });
+  app.use('/api', limiter);
 
-// Stricter limit on auth endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max:      20,
-  standardHeaders: true,
-  legacyHeaders:   false,
-  message: { status: 'fail', message: 'Too many login attempts. Please try again in 15 minutes.' },
-});
-app.use('/api/auth', authLimiter);
+  // Stricter limit on auth endpoints in production/dev
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max:      20,
+    standardHeaders: true,
+    legacyHeaders:   false,
+    message: { status: 'fail', message: 'Too many login attempts. Please try again in 15 minutes.' },
+  });
+  app.use('/api/auth', authLimiter);
+}
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '1mb' }));

@@ -8,7 +8,11 @@
     "dev": "nodemon src/app.js",
     "test": "jest --forceExit --detectOpenHandles --runInBand"
   },
-  "keywords": ["nexus", "express", "mongodb"],
+  "keywords": [
+    "nexus",
+    "express",
+    "mongodb"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -28,6 +32,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^11.3.0",
     "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   },
@@ -36,4 +41,3 @@
     "testTimeout": 30000
   }
 }
-
