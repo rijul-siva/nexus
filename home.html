@@ -91,8 +91,9 @@
               placeholder="e.g. Project Notes"
               required
               maxlength="100"
+              aria-describedby="fileNameFeedback"
             >
-            <div class="invalid-feedback">
+            <div class="invalid-feedback" id="fileNameFeedback">
               Please enter a valid file name (letters, numbers, spaces, dots, underscores or hyphens; cannot be blank or only symbols).
             </div>
           </div>
@@ -107,7 +108,8 @@
           </div>
           <div class="mb-3">
             <label for="initialContent" class="form-label fw-medium">Initial Content <span class="text-secondary fw-normal">(Optional)</span></label>
-            <textarea class="form-control" id="initialContent" rows="3" placeholder="Type initial content here..." maxlength="10000"></textarea>
+            <textarea class="form-control" id="initialContent" rows="3" placeholder="Type initial content here..." maxlength="10000" aria-describedby="initialContentFeedback"></textarea>
+            <div class="invalid-feedback" id="initialContentFeedback">Content must be at most 10000 characters.</div>
           </div>
         </div>
         <div class="modal-footer border-top-0">

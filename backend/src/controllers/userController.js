@@ -1,6 +1,7 @@
 'use strict';
 
 const User = require('../models/User');
+const { calculateAge } = require('../utils/age');
 
 /**
  * GET /api/users/profile
@@ -27,11 +28,13 @@ exports.getProfile = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
   try {
     // Whitelist only safe fields – never allow password/role changes here
-    const ALLOWED = ['fullName', 'phone', 'dob', 'age', 'course', 'bio', 'portfolioUrl', 'city', 'email'];
+    const ALLOWED = ['fullName', 'phone', 'dob', 'course', 'bio', 'portfolioUrl', 'city', 'email'];
     const updates = {};
     ALLOWED.forEach((field) => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
     });
+    if (updates.dob) updates.age = calculateAge(updates.dob);
+    else if (updates.dob === '') updates.age = null;
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ status: 'fail', message: 'No valid fields provided for update.' });
@@ -80,8 +83,8 @@ exports.changePassword = async (req, res, next) => {
       return res.status(400).json({ status: 'fail', message: 'newPassword and confirmPassword do not match.' });
     }
 
-    if (newPassword.length < 8) {
-      return res.status(400).json({ status: 'fail', message: 'New password must be at least 8 characters.' });
+    if (!newPassword.trim() || newPassword.length < 8 || newPassword.length > 72 || Buffer.byteLength(newPassword, 'utf8') > 72) {
+      return res.status(400).json({ status: 'fail', message: 'New password must be 8–72 characters (maximum 72 UTF-8 bytes) and cannot be blank.' });
     }
 
     if (!/(?=.*[A-Za-z])(?=.*\d)/.test(newPassword)) {

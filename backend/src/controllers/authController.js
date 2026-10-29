@@ -2,6 +2,7 @@
 
 const jwt  = require('jsonwebtoken');
 const User = require('../models/User');
+const { calculateAge } = require('../utils/age');
 
 /**
  * Sign and return a JWT token string.
@@ -39,7 +40,7 @@ exports.signup = async (req, res, next) => {
       fullName:     fullName    || '',
       phone:        phone       || '',
       dob:          dob         || null,
-      age:          age         || null,
+      age:          dob ? calculateAge(dob) : null,
       course:       course      || '',
       bio:          bio         || '',
       portfolioUrl: portfolioUrl || '',

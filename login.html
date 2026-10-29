@@ -26,7 +26,7 @@
             <p class="text-secondary mb-0">Sign in to your account</p>
           </div>
 
-
+          <div id="loginAlert" class="alert alert-danger rounded-3 d-none" role="alert" aria-live="polite"></div>
 
           <form id="loginForm" class="needs-validation" novalidate>
             <div class="mb-3">
@@ -34,9 +34,9 @@
               <div class="input-group">
                 <span class="input-group-text bg-white border-end-0"><i class="ti ti-user"></i></span>
                 <input type="text" class="form-control border-start-0" id="username" placeholder="Enter username"
-                  required>
+                  required minlength="3" maxlength="30" autocomplete="username" aria-describedby="usernameFeedback">
               </div>
-              <div class="invalid-feedback">Please enter your username.</div>
+              <div class="invalid-feedback" id="usernameFeedback">Username must be 3–30 characters using letters, numbers, underscores, or hyphens.</div>
             </div>
 
             <div class="mb-3">
@@ -44,9 +44,9 @@
               <div class="input-group">
                 <span class="input-group-text bg-white border-end-0"><i class="ti ti-lock"></i></span>
                 <input type="password" class="form-control border-start-0" id="password" placeholder="Enter password"
-                  required minlength="4">
+                  required minlength="8" maxlength="72" autocomplete="current-password" aria-describedby="passwordFeedback">
               </div>
-              <div class="invalid-feedback">Password must be at least 4 characters.</div>
+              <div class="invalid-feedback" id="passwordFeedback">Enter your password (at least 8 characters).</div>
             </div>
 
             <div class="form-check mb-4">

@@ -26,6 +26,25 @@ $(function () {
 
   function saveFiles(user, files) { localStorage.setItem(filesKey(user), JSON.stringify(files)); }
 
+  function calculateAge(dob) {
+    if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) return null;
+    var parts = dob.split("-").map(Number);
+    var birth = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    if (birth.getUTCFullYear() !== parts[0] || birth.getUTCMonth() !== parts[1] - 1 || birth.getUTCDate() !== parts[2]) return null;
+    var now = new Date();
+    var year = now.getUTCFullYear(), month = now.getUTCMonth() + 1, day = now.getUTCDate();
+    var age = year - parts[0];
+    if (month < parts[1] || (month === parts[1] && day < parts[2])) age -= 1;
+    return age;
+  }
+
+  function shiftUtcYear(date, years) {
+    var year = date.getUTCFullYear() + years;
+    var month = date.getUTCMonth();
+    var day = Math.min(date.getUTCDate(), new Date(Date.UTC(year, month + 1, 0)).getUTCDate());
+    return new Date(Date.UTC(year, month, day));
+  }
+
   function formatBytes(b) {
     if (b < 1024) return b + " B";
     return (b / 1024).toFixed(1) + " KB";
@@ -54,15 +73,14 @@ $(function () {
   /** City: letters, spaces, hyphens, dots. */
   var RE_CITY       = /^[A-Za-z][A-Za-z\s\-\.]{0,49}$/;
   /** File name: letters, digits, spaces, dots, underscores, hyphens (no pure specials). */
-  var RE_FILENAME   = /^[A-Za-z0-9][A-Za-z0-9\s_\-\.]{0,98}$/;
+  var RE_FILENAME   = /^[A-Za-z0-9][A-Za-z0-9\s_\-\.]{0,99}$/;
 
   /** Show a Bootstrap invalid-feedback message on a field. */
   function setInvalid($field, msg) {
     $field[0].setCustomValidity(msg || "invalid");
-    var feedbackId = $field.attr("id") + "Feedback";
-    if (msg && $("#" + feedbackId).length) {
-      $("#" + feedbackId).text(msg);
-    }
+    var feedback = $field.closest(".mb-3, .col-md-6, .col-md-4, .col-12").find(".invalid-feedback").first();
+    if (!feedback.length) feedback = $field.siblings(".invalid-feedback").first();
+    if (msg && feedback.length) feedback.text(msg);
   }
 
   /** Clear custom validity (mark field as valid for custom checks). */
@@ -96,7 +114,7 @@ $(function () {
 
       var $username = $("#username");
       var $password = $("#password");
-      var username  = $username.val();
+      var username  = $username.val().trim();
       var password  = $password.val();
 
       // --- Custom validation ---
@@ -114,8 +132,8 @@ $(function () {
       if (!password || password.trim().length === 0) {
         setInvalid($password, "Please enter your password.");
         valid = false;
-      } else if (password.length < 8) {
-        setInvalid($password, "Password must be at least 8 characters.");
+      } else if (password.length < 8 || password.length > 72 || new TextEncoder().encode(password).length > 72) {
+        setInvalid($password, "Password must be 8–72 characters and no more than 72 UTF-8 bytes.");
         valid = false;
       } else {
         setValid($password);
@@ -130,11 +148,11 @@ $(function () {
       });
 
       if (!userMatch) {
-        $("#loginAlert").text("Incorrect username or password.").show();
+        $("#loginAlert").text("Incorrect username or password.").removeClass("d-none").show();
         return;
       }
 
-      $("#loginAlert").hide();
+      $("#loginAlert").addClass("d-none").hide();
       sessionStorage.setItem(SESSION_KEY, username);
       window.location.href = "home.html";
     });
@@ -147,11 +165,24 @@ $(function () {
   if ($signupForm.length) {
 
     // --- Set DOB min/max dynamically ---
-    var today    = new Date();
-    var maxDob   = new Date(today.getFullYear() - 10, today.getMonth(), today.getDate()); // at least 10 years old
-    var minDob   = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate()); // at most 100 years old
-    var toISO    = function (d) { return d.toISOString().split("T")[0]; };
+    var now = new Date();
+    var today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    var maxDob = shiftUtcYear(today, -10); // latest DOB that meets the 10-year minimum
+    var minDob = shiftUtcYear(today, -101); // earliest DOB whose calculated age can still be 100
+    minDob.setUTCDate(minDob.getUTCDate() + 1);
+    var toISO = function (d) { return [d.getUTCFullYear(), String(d.getUTCMonth() + 1).padStart(2, "0"), String(d.getUTCDate()).padStart(2, "0")].join("-"); };
     $("#dob").attr("max", toISO(maxDob)).attr("min", toISO(minDob));
+    $("#age").prop("readonly", true);
+    $("#dob").on("input change", function () {
+      var dob = $(this).val();
+      var age = calculateAge(dob);
+      $("#age").val(age !== null && age >= 10 && age <= 100 ? age : "");
+      if (dob && (age === null || age < 10 || age > 100)) {
+        setInvalid($("#dob"), "Date of birth must be valid and indicate an age between 10 and 100.");
+      } else {
+        setValid($("#dob"));
+      }
+    });
 
     // --- Experience slider label ---
     $("#experience").on("input", function () {
@@ -165,10 +196,11 @@ $(function () {
       var len = $(this).val().length;
       $("#bioCharCount").text(len + " / 300");
       setValid($(this)); // clear any previous custom error on typing
+      if (len > 300) setInvalid($(this), "Bio must be no longer than 300 characters.");
     });
 
     // Real-time clear on input for key fields
-    ["fullName","regUsername","email","phone","regPassword","confirmPassword","dob","age","portfolio","city"]
+    ["fullName","regUsername","email","phone","regPassword","confirmPassword","portfolio","city"]
       .forEach(function (id) {
         $("#" + id).on("input change", function () { setValid($(this)); });
       });
@@ -188,7 +220,7 @@ $(function () {
       }
 
       // --- Username ---
-      var username = $("#regUsername").val();
+      var username = $("#regUsername").val().trim();
       if (!RE_USERNAME.test(username)) {
         setInvalid($("#regUsername"), "Username must be 3–30 characters: letters, numbers, _ or - only.");
         valid = false;
@@ -219,8 +251,8 @@ $(function () {
       if (!pass || pass.trim().length === 0) {
         setInvalid($("#regPassword"), "Password cannot be empty or only spaces.");
         valid = false;
-      } else if (pass.length < 8) {
-        setInvalid($("#regPassword"), "Password must be at least 8 characters.");
+      } else if (pass.length < 8 || pass.length > 72 || new TextEncoder().encode(pass).length > 72) {
+        setInvalid($("#regPassword"), "Password must be 8–72 characters and no more than 72 UTF-8 bytes.");
         valid = false;
       } else if (!RE_PASS_STRENGTH.test(pass)) {
         setInvalid($("#regPassword"), "Password must contain at least one letter and one digit.");
@@ -240,36 +272,26 @@ $(function () {
 
       // --- DOB (optional, validate if filled) ---
       var dob = $("#dob").val();
-      if (dob) {
-        var dobDate = new Date(dob);
-        if (isNaN(dobDate.getTime()) || dobDate > maxDob || dobDate < minDob) {
-          setInvalid($("#dob"), "Date of birth must be between " + toISO(minDob) + " and " + toISO(maxDob) + ".");
-          valid = false;
-        } else {
-          setValid($("#dob"));
-        }
+      var age = dob ? calculateAge(dob) : null;
+      if (dob && (age === null || age < 10 || age > 100)) {
+        setInvalid($("#dob"), "Date of birth must be valid and indicate an age between 10 and 100.");
+        valid = false;
+      } else if (dob) {
+        setValid($("#dob"));
       } else {
         setValid($("#dob"));
       }
-
-      // --- Age (optional, validate if filled) ---
-      var ageVal = $("#age").val();
-      if (ageVal !== "") {
-        var age = parseInt(ageVal, 10);
-        if (isNaN(age) || age < 10 || age > 100) {
-          setInvalid($("#age"), "Age must be between 10 and 100.");
-          valid = false;
-        } else {
-          setValid($("#age"));
-        }
-      } else {
-        setValid($("#age"));
-      }
+      $("#age").val(age !== null && age >= 10 && age <= 100 ? age : "");
 
       // --- Portfolio URL (optional, validate if filled) ---
       var portfolio = $("#portfolio").val().trim();
-      if (portfolio.length > 0) {
-        if (!/^https?:\/\/.+\..+/.test(portfolio)) {
+      if (portfolio.length > 2048) {
+        setInvalid($("#portfolio"), "Portfolio URL must be at most 2048 characters.");
+        valid = false;
+      } else if (portfolio.length > 0) {
+        var parsedPortfolio;
+        try { parsedPortfolio = new URL(portfolio); } catch (error) { parsedPortfolio = null; }
+        if (!parsedPortfolio || !["http:", "https:"].includes(parsedPortfolio.protocol) || !parsedPortfolio.hostname.includes(".")) {
           setInvalid($("#portfolio"), "Please enter a valid URL (must start with http:// or https://).");
           valid = false;
         } else {
@@ -281,8 +303,8 @@ $(function () {
 
       // --- City (optional, validate if filled) ---
       var city = $("#city").val().trim();
-      if (city.length > 0 && !RE_CITY.test(city)) {
-        setInvalid($("#city"), "City name should contain only letters, spaces, or hyphens.");
+      if (city.length > 50 || (city.length > 0 && !RE_CITY.test(city))) {
+        setInvalid($("#city"), city.length > 50 ? "City must be no longer than 50 characters." : "City name should contain only letters, spaces, hyphens, or dots.");
         valid = false;
       } else {
         setValid($("#city"));
@@ -290,8 +312,8 @@ $(function () {
 
       // --- Bio (optional, validate if filled — must not be only whitespace/special chars) ---
       var bio = $("#bio").val();
-      if (bio.length > 0 && isMeaninglessString(bio)) {
-        setInvalid($("#bio"), "Bio must contain at least some real text (not just spaces or symbols).");
+      if (bio.length > 300 || (bio.length > 0 && isMeaninglessString(bio))) {
+        setInvalid($("#bio"), bio.length > 300 ? "Bio must be no longer than 300 characters." : "Bio must contain at least some real text (not just spaces or symbols).");
         valid = false;
       } else {
         setValid($("#bio"));
@@ -302,8 +324,12 @@ $(function () {
 
       // --- Check duplicate username ---
       var users = getUsers();
-      if (users.some(function (u) { return u.username === username; })) {
-        $("#signupAlert").text("Username is already taken. Please choose another.").show();
+      if (users.some(function (u) { return u.username.toLowerCase() === username.toLowerCase(); })) {
+        $("#signupAlert").text("Username is already taken. Please choose another.").removeClass("d-none").show();
+        return;
+      }
+      if (users.some(function (u) { return u.email && u.email.toLowerCase() === email.toLowerCase(); })) {
+        $("#signupAlert").text("An account with this email already exists.").removeClass("d-none").show();
         return;
       }
 
@@ -312,12 +338,20 @@ $(function () {
         username: username,
         password: pass,
         fullName: fullName.trim(),
-        email:    email,
+        email:    email.toLowerCase(),
         phone:    phone,
-        course:   $("#course").val()
+        dob:      dob || "",
+        age:      age,
+        course:   $("#course").val(),
+        city:     city,
+        bio:      bio.trim(),
+        portfolio: portfolio,
+        accountType: $("input[name='accountType']:checked").val(),
+        favColor: $("#favColor").val(),
+        experience: Number($("#experience").val())
       });
       saveUsers(users);
-      $("#signupAlert").hide();
+      $("#signupAlert").addClass("d-none").hide();
       window.location.href = "login.html";
     });
   }
@@ -374,9 +408,9 @@ $(function () {
       var $nameField = $("#fileName");
       var name = $nameField.val().trim();
 
-      if (!name || isMeaninglessString(name)) {
+      if (!name || name.length > 100 || isMeaninglessString(name)) {
         $nameField.addClass("is-invalid");
-        $nameField.next(".invalid-feedback").text("Please enter a valid file name.");
+        $nameField.next(".invalid-feedback").text(name.length > 100 ? "File name must be at most 100 characters." : "Please enter a valid file name.");
         return;
       }
       if (!RE_FILENAME.test(name)) {
@@ -386,12 +420,24 @@ $(function () {
       }
       $nameField.removeClass("is-invalid").addClass("is-valid");
 
+      var initialContent = $("#initialContent").val();
+      if (initialContent.length > 10000) {
+        $("#initialContent").addClass("is-invalid");
+        $("#initialContentFeedback").text("Content must be at most 10000 characters.");
+        return;
+      }
+      $("#initialContent").removeClass("is-invalid");
       var files   = getFiles(currentUser);
+      if (files.some(function (file) { return file.name.toLowerCase() === name.toLowerCase(); })) {
+        $nameField.addClass("is-invalid");
+        $nameField.next(".invalid-feedback").text("A file with this name already exists.");
+        return;
+      }
       var newFile = {
         id:      Date.now(),
         name:    name,
         type:    $("#fileType").val(),
-        content: $("#initialContent").val().trim() || "Sample text for " + name
+        content: initialContent.trim() || "Sample text for " + name
       };
       files.push(newFile);
       saveFiles(currentUser, files);
@@ -404,6 +450,7 @@ $(function () {
     $("#fileName").on("input", function () {
       $(this).removeClass("is-invalid is-valid");
     });
+    $("#initialContent").on("input", function () { $(this).removeClass("is-invalid"); });
 
     $(document).on("click", ".delete-file", function (e) {
       e.stopPropagation();
@@ -477,7 +524,11 @@ $(function () {
     var autoSaveTimer = null;
     $("#fileContentArea").on("input", function () {
       if (!activeFile) return;
-      $("#editorSaveStatus").text("Saving...").addClass("bg-warning text-dark");
+      if ($(this).val().length > 10000) {
+        $("#editorSaveStatus").text("Not saved: 10,000 character limit").removeClass("bg-warning").addClass("bg-danger text-white");
+        return;
+      }
+      $("#editorSaveStatus").text("Saving...").removeClass("bg-danger text-white").addClass("bg-warning text-dark");
       activeFile.content = $(this).val();
 
       clearTimeout(autoSaveTimer);
@@ -490,6 +541,10 @@ $(function () {
 
     $("#saveContentBtn").on("click", function () {
       if (!activeFile) return;
+      if ($("#fileContentArea").val().length > 10000) {
+        showToast("Content cannot exceed 10,000 characters.");
+        return;
+      }
       activeFile.content = $("#fileContentArea").val();
       saveFiles(currentUser, userFiles);
       updateStorage();
@@ -570,7 +625,7 @@ $(function () {
       var $nameField = $("#editorFileName");
       var name = $nameField.val().trim();
 
-      if (!name || isMeaninglessString(name)) {
+      if (!name || name.length > 100 || isMeaninglessString(name)) {
         $nameField.addClass("is-invalid");
         return;
       }
@@ -580,11 +635,23 @@ $(function () {
       }
       $nameField.removeClass("is-invalid").addClass("is-valid");
 
+      var editorInitialContent = $("#editorInitialContent").val();
+      if (editorInitialContent.length > 10000) {
+        $("#editorInitialContent").addClass("is-invalid");
+        $("#editorInitialContentFeedback").text("Content must be at most 10000 characters.");
+        return;
+      }
+      $("#editorInitialContent").removeClass("is-invalid");
+      if (userFiles.some(function (file) { return file.name.toLowerCase() === name.toLowerCase(); })) {
+        $nameField.addClass("is-invalid");
+        $("#editorFileNameFeedback").text("A file with this name already exists.");
+        return;
+      }
       var newFile = {
         id:      Date.now(),
         name:    name,
         type:    $("#editorFileType").val(),
-        content: $("#editorInitialContent").val().trim() || "Content for " + name
+        content: editorInitialContent.trim() || "Content for " + name
       };
       userFiles.push(newFile);
       saveFiles(currentUser, userFiles);
@@ -599,6 +666,7 @@ $(function () {
     $("#editorFileName").on("input", function () {
       $(this).removeClass("is-invalid is-valid");
     });
+    $("#editorInitialContent").on("input", function () { $(this).removeClass("is-invalid"); });
 
     $("#searchInput").on("input", function () {
       var q   = $(this).val().toLowerCase().trim();

@@ -3,7 +3,7 @@
 const express    = require('express');
 const userCtrl   = require('../controllers/userController');
 const protect    = require('../middleware/auth');
-const { validateUpdateProfile } = require('../middleware/validators');
+const { validateUpdateProfile, validateChangePassword } = require('../middleware/validators');
 
 const router = express.Router();
 
@@ -29,7 +29,7 @@ router.patch('/profile', validateUpdateProfile, userCtrl.updateProfile);
  * @desc    Change password (requires current password)
  * @access  Private
  */
-router.patch('/password', userCtrl.changePassword);
+router.patch('/password', validateChangePassword, userCtrl.changePassword);
 
 /**
  * @route   DELETE /api/users/account

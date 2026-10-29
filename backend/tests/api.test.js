@@ -348,7 +348,7 @@ describe('File CRUD routes', () => {
 
     // Register a second user
     const token2 = await registerAndLogin({
-      username: 'otheruser', email: 'other@example.com', password: 'Other1234',
+      username: 'otheruser', email: 'other@example.com', password: 'Other1234', fullName: 'Other User',
     });
 
     const res = await request(app)

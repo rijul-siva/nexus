@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 const bcrypt   = require('bcryptjs');
+const { calculateAge, isValidDateOfBirth } = require('../utils/age');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -11,6 +12,10 @@ const UserSchema = new mongoose.Schema(
       unique:    true,
       trim:      true,
       minlength: [3,  'Username must be at least 3 characters'],
+      validate: {
+        validator: (value) => !value || value.trim() === value,
+        message: 'Username cannot have leading or trailing spaces',
+      },
       maxlength: [30, 'Username must be at most 30 characters'],
       match: [
         /^[A-Za-z0-9_-]+$/,
@@ -23,12 +28,18 @@ const UserSchema = new mongoose.Schema(
       unique:   true,
       trim:     true,
       lowercase: true,
+      maxlength: [254, 'Email must be at most 254 characters'],
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
     },
     password: {
       type:      String,
       required:  [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters'],
+      maxlength: [72, 'Password must be at most 72 characters'],
+      validate: {
+        validator: (value) => !value || Buffer.byteLength(value, 'utf8') <= 72,
+        message: 'Password must be no more than 72 UTF-8 bytes for bcrypt.',
+      },
       select:    false, // never returned in queries by default
     },
     fullName: {
@@ -46,6 +57,10 @@ const UserSchema = new mongoose.Schema(
     dob: {
       type:    Date,
       default: null,
+      validate: {
+        validator: (value) => value == null || isValidDateOfBirth(value),
+        message: 'Date of birth must indicate an age between 10 and 100.',
+      },
     },
     age: {
       type:    Number,
@@ -79,6 +94,13 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Keep age derived from DOB; do not trust a separately submitted age.
+UserSchema.pre('validate', function (next) {
+  if (this.dob) this.age = calculateAge(this.dob);
+  else if (this.isModified('dob')) this.age = null;
+  next();
+});
 
 // ── Hash password before save ─────────────────────────────────────────────────
 UserSchema.pre('save', async function (next) {

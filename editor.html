@@ -143,7 +143,7 @@
             <button type="button" class="btn btn-sm btn-primary py-0 px-2" id="saveContentBtn">Save</button>
           </div>
         </div>
-        <textarea class="editor-textarea" id="fileContentArea" placeholder="Type document content here..."></textarea>
+        <textarea class="editor-textarea" id="fileContentArea" placeholder="Type document content here..." maxlength="10000"></textarea>
       </div>
 
       <!-- Bottom-Right Quick Action Islands -->
@@ -215,8 +215,8 @@
           <div class="modal-body p-4">
             <div class="mb-3">
               <label for="editorFileName" class="form-label fw-medium">File name</label>
-              <input type="text" class="form-control" id="editorFileName" placeholder="e.g. Design Spec" required maxlength="100">
-              <div class="invalid-feedback">Please enter a valid file name (letters, numbers, spaces, dots, underscores or hyphens; cannot be blank or only symbols).</div>
+              <input type="text" class="form-control" id="editorFileName" placeholder="e.g. Design Spec" required maxlength="100" aria-describedby="editorFileNameFeedback">
+              <div class="invalid-feedback" id="editorFileNameFeedback">Please enter a valid file name (letters, numbers, spaces, dots, underscores or hyphens; cannot be blank or only symbols).</div>
             </div>
             <div class="mb-3">
               <label for="editorFileType" class="form-label fw-medium">File type</label>
@@ -230,7 +230,8 @@
             <div class="mb-3">
               <label for="editorInitialContent" class="form-label fw-medium">Initial Content <span class="text-secondary fw-normal">(Optional)</span></label>
               <textarea class="form-control" id="editorInitialContent" rows="3"
-                placeholder="Type initial content..." maxlength="10000"></textarea>
+                placeholder="Type initial content..." maxlength="10000" aria-describedby="editorInitialContentFeedback"></textarea>
+              <div class="invalid-feedback" id="editorInitialContentFeedback">Content must be at most 10000 characters.</div>
             </div>
           </div>
           <div class="modal-footer border-top-0">

@@ -26,70 +26,71 @@
             <p class="text-secondary mb-0">Fill in your details to get started</p>
           </div>
 
-          <div id="signupAlert" class="alert alert-danger rounded-3" role="alert"></div>
+          <div id="signupAlert" class="alert alert-danger rounded-3 d-none" role="alert" aria-live="polite"></div>
 
           <form id="signupForm" class="row g-3" novalidate>
 
             <!-- Full Name -->
             <div class="col-md-6">
               <label for="fullName" class="form-label fw-medium">Full name</label>
-              <input type="text" class="form-control" id="fullName" placeholder="Enter full name" required>
+              <input type="text" class="form-control" id="fullName" placeholder="Enter full name" required maxlength="60" autocomplete="name">
               <div class="invalid-feedback">Please enter your name.</div>
             </div>
 
             <!-- Username -->
             <div class="col-md-6">
               <label for="regUsername" class="form-label fw-medium">Username</label>
-              <input type="text" class="form-control" id="regUsername" placeholder="Choose a username" required>
+              <input type="text" class="form-control" id="regUsername" placeholder="Choose a username" required minlength="3" maxlength="30" autocomplete="username">
               <div class="invalid-feedback">Please choose a username.</div>
             </div>
 
             <!-- Email -->
             <div class="col-md-6">
               <label for="email" class="form-label fw-medium">Email address</label>
-              <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+              <input type="email" class="form-control" id="email" placeholder="name@example.com" required maxlength="254" autocomplete="email">
               <div class="invalid-feedback">Please enter a valid email.</div>
             </div>
 
             <!-- Phone -->
             <div class="col-md-6">
               <label for="phone" class="form-label fw-medium">Phone number</label>
-              <input type="tel" class="form-control" id="phone" placeholder="10 digit mobile number"
-                pattern="[0-9]{10}">
+              <input type="tel" class="form-control" id="phone" placeholder="10 digit mobile number" inputmode="tel" autocomplete="tel" aria-describedby="phoneFeedback">
+              <div class="invalid-feedback" id="phoneFeedback">Enter a valid 10-digit Indian mobile number (optionally with +91 or 0).</div>
             </div>
 
             <!-- Password -->
             <div class="col-md-6">
               <label for="regPassword" class="form-label fw-medium">Password</label>
-              <input type="password" class="form-control" id="regPassword" placeholder="Enter password" required
-                minlength="4">
-              <div class="invalid-feedback">Password must be at least 4 characters.</div>
+              <input type="password" class="form-control" id="regPassword" placeholder="Enter password" required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="regPasswordFeedback">
+              <div class="invalid-feedback" id="regPasswordFeedback">Use 8–72 characters, including a letter and a number.</div>
             </div>
 
             <!-- Confirm Password -->
             <div class="col-md-6">
               <label for="confirmPassword" class="form-label fw-medium">Confirm password</label>
-              <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required
-                minlength="4">
-              <div class="invalid-feedback">Passwords must match.</div>
+              <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="confirmPasswordFeedback">
+              <div class="invalid-feedback" id="confirmPasswordFeedback">Passwords must match and use 8–72 characters.</div>
             </div>
 
             <!-- Date of birth -->
             <div class="col-md-4">
               <label for="dob" class="form-label fw-medium">Date of birth</label>
-              <input type="date" class="form-control" id="dob">
+              <input type="date" class="form-control" id="dob" aria-describedby="dobFeedback">
+              <div class="invalid-feedback" id="dobFeedback">Enter a valid date of birth.</div>
             </div>
 
             <!-- Age -->
             <div class="col-md-4">
               <label for="age" class="form-label fw-medium">Age</label>
-              <input type="number" class="form-control" id="age" min="10" max="100" placeholder="e.g. 20">
+              <input type="number" class="form-control" id="age" min="10" max="100" step="1" placeholder="Calculated from date of birth" readonly aria-describedby="ageHelp">
+              <div class="form-text" id="ageHelp">Calculated from your date of birth.</div>
             </div>
 
             <!-- Portfolio URL -->
             <div class="col-md-4">
               <label for="portfolio" class="form-label fw-medium">Portfolio URL</label>
-              <input type="url" class="form-control" id="portfolio" placeholder="https://example.com">
+              <input type="url" class="form-control" id="portfolio" placeholder="https://example.com" maxlength="2048" aria-describedby="portfolioFeedback">
+              <div class="invalid-feedback" id="portfolioFeedback">Enter a valid http:// or https:// URL.</div>
             </div>
 
             <!-- Course Select -->
@@ -106,7 +107,8 @@
             <!-- City Datalist -->
             <div class="col-md-6">
               <label for="city" class="form-label fw-medium">City</label>
-              <input class="form-control" list="cityOptions" id="city" placeholder="Choose or type city">
+              <input class="form-control" list="cityOptions" id="city" placeholder="Choose or type city" maxlength="50" aria-describedby="cityFeedback">
+              <div class="invalid-feedback" id="cityFeedback">City may use letters, spaces, hyphens, or dots (max 50 characters).</div>
               <datalist id="cityOptions">
                 <option value="Vellore">
                 <option value="Chennai">
@@ -147,7 +149,9 @@
             <!-- Short Bio -->
             <div class="col-12">
               <label for="bio" class="form-label fw-medium">Short bio</label>
-              <textarea class="form-control" id="bio" rows="2" placeholder="Tell us a little about yourself"></textarea>
+              <textarea class="form-control" id="bio" rows="2" maxlength="300" placeholder="Tell us a little about yourself"></textarea>
+              <div class="form-text" id="bioCharCount">0 / 300</div>
+              <div class="invalid-feedback" id="bioFeedback">Bio must contain some text and be no longer than 300 characters.</div>
             </div>
 
             <!-- Required Checkbox -->

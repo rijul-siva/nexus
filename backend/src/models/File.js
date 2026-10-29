@@ -18,7 +18,7 @@ const FileSchema = new mongoose.Schema(
       trim:      true,
       maxlength: [100, 'File name must be at most 100 characters'],
       match: [
-        /^[A-Za-z0-9][A-Za-z0-9 _\-.]{0,98}$/,
+        /^[A-Za-z0-9][A-Za-z0-9 _\-.]{0,99}$/,
         'File name may only contain letters, numbers, spaces, dots, underscores, or hyphens',
       ],
     },
@@ -28,8 +28,9 @@ const FileSchema = new mongoose.Schema(
       default: 'Document',
     },
     content: {
-      type:    String,
-      default: '',
+      type:      String,
+      maxlength: [10000, 'File content must be at most 10000 characters'],
+      default:   '',
     },
   },
   { timestamps: true }
